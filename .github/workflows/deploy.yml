@@ -1,0 +1,49 @@
+name: release
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: 対象ブランチをクローン
+        uses: actions/checkout@v4
+
+      - name: Goの準備
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.2'
+          cache: true
+          cache-dependency-path: go.sum
+
+      - name: AWSの認証情報を設定
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::794038226787:role/githubactions-ecr-push-role-58hack
+          role-duration-seconds: 900 
+          aws-region: ap-northeast-1
+
+      - name: ECRにログイン
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: コンテナイメージのビルド
+        run: |
+          docker build -t 58hack-api -f ./docker/Dockerfile.prod --platform linux/x86_64 . 
+
+      - name: ECRにコンテナイメージをプッシュし、Lambdaに反映
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: 58hack-api
+          AWS_REGION: ap-northeast-1
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker tag 58hack-api:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          aws lambda update-function-code --function-name 58hack-api --image-uri $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --region $AWS_REGION
