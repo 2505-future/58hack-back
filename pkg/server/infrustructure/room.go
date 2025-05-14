@@ -3,6 +3,7 @@ package infrustructure
 import (
 	"58-hack-api/pkg/server/model"
 	"encoding/json"
+	"errors"
 
 	"github.com/supabase-community/supabase-go"
 )
@@ -39,6 +40,10 @@ func (ri *RoomInfrustructure) CreateRoom(hostID, name string, capacity int) (str
 
 	if err := json.Unmarshal(resp, &room); err != nil {
 		return "", err
+	}
+
+	if len(room) == 0 {
+		return "", errors.New("no room created")
 	}
 
 	return room[0].ID, nil
