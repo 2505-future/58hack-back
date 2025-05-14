@@ -2,13 +2,14 @@ package router
 
 import (
 	"58-hack-api/pkg/middleware"
+	"58-hack-api/pkg/server/controller"
 
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 	"go.uber.org/zap"
 )
 
-func NewRouter() *echo.Echo {
+func NewRouter(rc controller.IRoomController) *echo.Echo {
 	e := echo.New()
 
 	// panicが発生した場合の処理
@@ -30,6 +31,10 @@ func NewRouter() *echo.Echo {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(200, "Hello, World!")
 	})
+
+	roomAPI := e.Group("/rooms")
+	roomAPI.POST("", rc.CreateRoom)
+	roomAPI.POST("/verify", rc.VerifyPassword)
 
 	return e
 }
