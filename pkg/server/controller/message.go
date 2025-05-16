@@ -10,8 +10,6 @@ import (
 
 type IMessageController interface {
 	SendAction(c echo.Context) error
-	SendJoin(c echo.Context) error
-	SendLeave(c echo.Context) error
 	SendStart(c echo.Context) error
 }
 
