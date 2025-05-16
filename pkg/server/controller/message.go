@@ -25,22 +25,6 @@ func NewMessageController(uc usecase.IMessageUsecase) *MessageController {
 	}
 }
 
-func (mc *MessageController) SendJoin(c echo.Context) error {
-	body, err := io.ReadAll(c.Request().Body)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "failed to read request body"})
-	}
-	return mc.sendRawJSON(c, body)
-}
-
-func (mc *MessageController) SendLeave(c echo.Context) error {
-	body, err := io.ReadAll(c.Request().Body)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "failed to read request body"})
-	}
-	return mc.sendRawJSON(c, body)
-}
-
 func (mc *MessageController) SendStart(c echo.Context) error {
 	body, err := io.ReadAll(c.Request().Body)
 	if err != nil {
