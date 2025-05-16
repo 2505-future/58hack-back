@@ -9,12 +9,17 @@ import (
 )
 
 func main() {
-	db := db.NewClient()
-	ri := infrustructure.NewRoomInfrustructure(db)
+	DBClient := db.NewClient()
+	dynamodb := db.NewDynamoDBClient()
+	ri := infrustructure.NewRoomInfrustructure(DBClient)
+	di := infrustructure.NewDynamoDB(dynamodb, "websocket")
+	wi := infrustructure.NewWebsocketInfrastructure()
+	mu := usecase.NewMessageUsecase(di, wi)
+	mc := controller.NewMessageController(mu)
 	ru := usecase.NewRoomUsecase(ri)
 	rc := controller.NewRoomController(ru)
 
-	e := router.NewRouter(rc)
+	e := router.NewRouter(rc, mc)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

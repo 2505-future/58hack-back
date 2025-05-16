@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func NewRouter(rc controller.IRoomController) *echo.Echo {
+func NewRouter(rc controller.IRoomController, mc controller.IMessageController) *echo.Echo {
 	e := echo.New()
 
 	// panicが発生した場合の処理
@@ -35,6 +35,11 @@ func NewRouter(rc controller.IRoomController) *echo.Echo {
 	roomAPI := e.Group("/rooms")
 	roomAPI.POST("", rc.CreateRoom)
 	roomAPI.POST("/verify", rc.VerifyPassword)
+
+	roomAPI.POST("/:roomID/join", mc.SendJoin)
+	roomAPI.POST("/:roomID/leave", mc.SendLeave)
+	roomAPI.POST("/:roomID/start", mc.SendStart)
+	roomAPI.POST("/:roomID/action", mc.SendAction)
 
 	return e
 }
