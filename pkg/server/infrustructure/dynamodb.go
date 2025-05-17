@@ -95,6 +95,17 @@ func (d *DynamoDB) GetUsers(roomId string, users *[]model.User) error {
 				return fmt.Errorf("failed to convert volume to int: %w", err)
 			}
 		}
+		if val, ok := item["point"].(*types.AttributeValueMemberL); ok {
+			for _, v := range val.Value {
+				if num, ok := v.(*types.AttributeValueMemberN); ok {
+					point, err := strconv.Atoi(num.Value)
+					if err != nil {
+						return fmt.Errorf("failed to convert point to int: %w", err)
+					}
+					user.Point = append(user.Point, point)
+				}
+			}
+		}
 		*users = append(*users, user)
 	}
 

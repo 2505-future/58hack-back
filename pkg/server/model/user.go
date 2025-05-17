@@ -7,4 +7,5 @@ type User = struct {
 	Power   int    `json:"power"`
 	Weight  int    `json:"weight"`
 	Volume  int    `json:"volume"`
+	Point   []int  `json:"point"`
 }
