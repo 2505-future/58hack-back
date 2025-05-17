@@ -60,7 +60,7 @@ func (rc *RoomController) VerifyPassword(c echo.Context) error {
 		resp = schema.VerifyRoomResponse{
 			Status: "ng",
 		}
-		return c.JSON(http.StatusNotFound, resp)
+		return c.JSON(http.StatusOK, resp)
 	}
 
 	resp = schema.VerifyRoomResponse{
