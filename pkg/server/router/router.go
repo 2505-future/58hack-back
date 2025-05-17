@@ -35,7 +35,7 @@ func NewRouter(rc controller.IRoomController, mc controller.IMessageController) 
 	roomAPI := e.Group("/rooms")
 	roomAPI.POST("", rc.CreateRoom)
 	roomAPI.POST("/verify", rc.VerifyPassword)
-
+	roomAPI.GET("/:roomID/join", rc.JoinRoom)
 	roomAPI.POST("/:roomID/start", mc.SendStart)
 	roomAPI.POST("/:roomID/action", mc.SendAction)
 

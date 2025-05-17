@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log"
 	"net/http"
 
 	"58-hack-api/pkg/server/controller/schema"
@@ -12,6 +13,7 @@ import (
 type IRoomController interface {
 	CreateRoom(c echo.Context) error
 	VerifyPassword(c echo.Context) error
+	JoinRoom(c echo.Context) error
 }
 
 type RoomController struct {
@@ -63,6 +65,25 @@ func (rc *RoomController) VerifyPassword(c echo.Context) error {
 
 	resp = schema.VerifyRoomResponse{
 		Status: "ok",
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+func (rc *RoomController) JoinRoom(c echo.Context) error {
+	roomID := c.Param("roomID")
+	log.Println("roomID:", roomID)
+	if roomID == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "roomID is required"})
+	}
+
+	users, err := rc.ru.JoinRoom(roomID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	resp := schema.JoinRoomResponse{
+		Users: users,
 	}
 
 	return c.JSON(http.StatusOK, resp)
