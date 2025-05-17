@@ -16,7 +16,7 @@ func main() {
 	wi := infrustructure.NewWebsocketInfrastructure()
 	mu := usecase.NewMessageUsecase(di, wi)
 	mc := controller.NewMessageController(mu)
-	ru := usecase.NewRoomUsecase(ri)
+	ru := usecase.NewRoomUsecase(ri, di)
 	rc := controller.NewRoomController(ru)
 
 	e := router.NewRouter(rc, mc)

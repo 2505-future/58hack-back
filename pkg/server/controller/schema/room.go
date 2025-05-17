@@ -1,5 +1,7 @@
 package schema
 
+import "58-hack-api/pkg/server/model"
+
 type CreateRoomRequest struct {
 	HostID   string `json:"host_id"`
 	Name     string `json:"name"`
@@ -17,4 +19,8 @@ type VerifyRoomRequest struct {
 
 type VerifyRoomResponse struct {
 	Status string `json:"status"`
+}
+
+type JoinRoomResponse struct {
+	Users []model.User `json:"users"`
 }
